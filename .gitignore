@@ -1,0 +1,15 @@
+# Secrets and private runtime configuration
+config.private.gs
+.env
+.env.*
+!.env.example
+
+# Google Apps Script files that currently contain sensitive IDs
+Code.gs
+Code-Peminjaman.gs
+appsscript.json
+
+# Editor and OS noise
+.vscode/
+.DS_Store
+Thumbs.db
