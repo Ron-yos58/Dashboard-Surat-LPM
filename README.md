@@ -1,120 +1,218 @@
 # Dasbor Surat LPM
 
-Aplikasi ini adalah web app **Google Apps Script** untuk membantu administrasi surat dan dokumen LPM. Sistem terhubung ke **Google Spreadsheet** sebagai basis data dan **Google Drive** sebagai penyimpanan arsip file.
+Dokumentasi diperbarui: 2026-06-04.
 
-## Ringkasan Fungsi
+Dasbor Surat LPM adalah web app berbasis **Google Apps Script** untuk administrasi surat, dokumen mutu, sertifikat, peminjaman, dan kontak LPM Universitas Katolik Parahyangan. Aplikasi menggunakan **Google Spreadsheet** sebagai basis data, **Google Drive** sebagai penyimpanan arsip, dan **Google Contacts / People API** untuk sinkronisasi kontak.
 
-Dasbor ini digunakan untuk:
+## Ringkasan
 
-- mengelola **surat keluar**
-- mengelola **surat masuk**
-- mengelola **dokumen Sistem Penjaminan Mutu / Tata Naskah Dinas**
-- mengelola **sertifikat**
-- mengelola **peminjaman buku atau barang**
-- mencatat **audit log** aktivitas data
-- mengirim **notifikasi dan pengingat otomatis** melalui email
+Fitur utama aplikasi:
 
-## Fitur Utama
+- pengelolaan surat keluar dengan nomor otomatis dan arsip Drive
+- pengelolaan surat masuk dengan nomor manual dari dokumen asli
+- pengelolaan Dokumen Sistem Penjaminan Mutu
+- reservasi nomor sertifikat secara batch
+- pencatatan peminjaman buku atau barang beserta reminder email
+- manajemen kontak dan sinkronisasi ke Google Contacts
+- audit log, notifikasi draft, trigger otomatis, dan utilitas pemeliharaan data
 
-### 1. Surat Keluar
+## Modul Aplikasi
 
-- input data surat keluar melalui form web
-- pembuatan nomor surat otomatis berdasarkan tipe surat, tanggal, dan urutan
-- dukungan berbagai tipe surat seperti peraturan, keputusan, surat undangan, surat tugas, berita acara, laporan, dan lain-lain
-- unggah file arsip ke Google Drive
-- edit dan hapus data berdasarkan Record ID
-- pencatatan audit setiap perubahan data
+### Surat Keluar
 
-### 2. Surat Masuk
+Modul ini mengelola surat keluar LPM.
 
-- input data surat masuk melalui form
-- penyimpanan metadata surat ke spreadsheet
-- lampiran file arsip jika diperlukan
-- daftar data surat masuk yang dapat ditampilkan kembali dari sistem
-- fungsi hapus data surat masuk dengan kontrol Record ID
+- nomor surat final dibuat otomatis dari tanggal, sequence global, dan kategori Internal/Eksternal
+- jenis naskah diambil dari konfigurasi `Config_NoSurat`
+- penerima dan tembusan bisa dipilih dari daftar atau ditulis manual
+- status data mendukung `DRAFT`, `SUBMITTED`, `RESERVED`, `CANCELLED`, dan `ARCHIVED`
+- file arsip dapat diunggah ke Google Drive
+- draft aktif muncul di notifikasi dan dapat dikirimkan reminder email
+- setiap perubahan penting dicatat ke `Audit_Log`
 
-### 3. Dokumen Sistem Penjaminan Mutu
+### Surat Masuk
 
-- pengelolaan dokumen SPM / TND
-- penomoran dokumen otomatis
-- dukungan jenis dokumen seperti Kebijakan, Standar, Manual, Prosedur Operasional Baku, Instruksi Kerja, Formulir, dan lainnya
-- riwayat dokumen dapat diperbarui dan diberi status
-- pengarsipan file ke folder Drive khusus
+Modul ini mengelola metadata surat masuk.
 
-### 4. Sertifikat
+- nomor surat diisi manual sesuai nomor pada dokumen asli
+- tanggal terima dan tanggal surat disimpan terpisah
+- pengirim, penerima, dan tembusan mendukung pilihan konfigurasi atau input manual
+- arsip file tersimpan di Google Drive
+- catatan atau disposisi tetap dapat diperbarui bersama arsip
+- data dapat dicari, diedit, dan dihapus berbasis `Record ID`
 
-- pengelolaan data sertifikat dalam bentuk batch
-- penomoran dan penyimpanan data sertifikat terstruktur
-- dukungan pengolahan beberapa data sekaligus
+### Dokumen Sistem Penjaminan Mutu
 
-### 5. Peminjaman
+Modul ini mengelola dokumen non-surat seperti kebijakan, standar, manual, POB, instruksi kerja, formulir, laporan, dan pedoman.
 
-- pencatatan data peminjaman buku atau barang
-- pengelolaan tanggal pinjam dan tanggal kembali
-- pengiriman email pengingat otomatis untuk data yang melewati jatuh tempo
-- diagnosis status reminder untuk mengecek trigger dan data yang belum terkirim
+- kode dokumen dibuat dari unit, jenis dokumen, kelompok kegiatan, tanggal berlaku, nomor dokumen, dan revisi
+- nomor dokumen dihitung per kombinasi unit, jenis dokumen, dan kelompok kegiatan
+- status dokumen mendukung `DRAFT`, `BERLAKU`, `REVISI`, dan `OBSOLETE`
+- dokumen dapat ditandai obsolete tanpa menghapus riwayat
+- arsip file tersimpan di folder Drive khusus
 
-### 6. Dashboard dan Utilitas
+### Sertifikat
 
-- tampilan antarmuka web modern dan responsif
-- navigasi modul melalui sidebar
-- ringkasan dashboard dan laporan bulanan
-- tampilan audit log
-- akses cepat ke folder arsip Drive
-- pengaturan visibilitas sheet konfigurasi
-- fungsi perbaikan dan sinkronisasi data konfigurasi
-- pembersihan trigger otomatis dan perbaikan kolom hasil generate
+Modul sertifikat digunakan untuk reservasi nomor dalam jumlah banyak.
+
+- sequence mengikuti nomor global surat keluar pada tahun berjalan
+- kategori dapat diatur sebagai Internal atau Eksternal
+- satu batch dapat mencadangkan banyak nomor sekaligus
+- data sertifikat disimpan sebagai `RESERVED`
+- modul ini tidak mewajibkan upload arsip per nomor
+
+### Peminjaman
+
+Modul peminjaman mencatat peminjaman buku atau barang.
+
+- data yang disimpan mencakup email, nama peminjam, unit, nama buku/barang, tanggal pinjam, dan tanggal kembali
+- riwayat dapat dicari dari antarmuka web
+- sistem menghitung ringkasan total peminjaman dan reminder terkirim
+- fungsi reminder email mengirim pengingat untuk peminjaman yang melewati tanggal kembali
+- tersedia fungsi diagnosis trigger dan status reminder
+
+### Manajemen Kontak
+
+Modul kontak mengelola data pada sheet `Config_Contacts` dan sinkronisasinya ke Google Contacts.
+
+- tambah, ubah, dan hapus kontak dari antarmuka web
+- filter kontak berdasarkan status sync
+- sinkronisasi perubahan spreadsheet ke Google Contacts
+- import kontak dari Google Contacts ke spreadsheet
+- deduplikasi kontak berdasarkan data yang tersedia
+- pengelolaan grup kontak dan anggota grup
+- trigger harian dapat dipasang untuk sync otomatis pukul 02:00
 
 ## Struktur File
 
-- [Code.gs](Code.gs) - logika utama aplikasi, pengelolaan surat, dokumen, sertifikat, audit, dashboard, dan utilitas
-- [Code-Peminjaman.gs](Code-Peminjaman.gs) - logika khusus reminder dan diagnosis peminjaman
-- [index.html](index.html) - antarmuka web aplikasi
-- [appsscript.json](appsscript.json) - konfigurasi project dan scope izin
+- [Code.gs](Code.gs) - backend utama: routing web app, surat keluar, surat masuk, dokumen SPM, sertifikat, audit log, dashboard, konfigurasi, upload arsip, dan utilitas
+- [Code-Peminjaman.gs](Code-Peminjaman.gs) - reminder, diagnosis, dan helper email peminjaman
+- [Code-Contacts.gs](Code-Contacts.gs) - backend manajemen kontak, Google Contacts, People API, grup kontak, import, sync, deduplikasi, dan trigger sync harian
+- [index.html](index.html) - antarmuka web responsif dengan modul utama, form, tabel, preview, toast, loading overlay, dan notifikasi draft
+- [appsscript.json](appsscript.json) - manifest Apps Script, runtime V8, scope OAuth, dan konfigurasi People API
 
-## Alur Kerja Singkat
+## Sheet Utama
 
-1. Pengguna membuka web app.
-2. Pengguna memilih modul dari sidebar.
-3. Data diinput melalui form.
-4. Sistem menyimpan data ke Google Spreadsheet.
-5. File arsip disimpan ke Google Drive jika ada lampiran.
-6. Sistem membuat nomor otomatis, audit log, dan notifikasi sesuai kebutuhan.
+Aplikasi membuat atau menggunakan beberapa sheet berikut:
+
+- `Surat_Keluar`
+- `Surat_Masuk`
+- `Dokumen Sistem Penjaminan Mutu`
+- `Data Peminjam Buku atau Barang`
+- `Config_Contacts`
+- `Config_Signatories`
+- `Config_Recipients`
+- `Config_NoSurat`
+- `Config_Status`
+- `Config_DokumenSPM`
+- `Audit_Log`
+
+Beberapa sheet legacy masih ditangani oleh kode, misalnya `Uji_Coba` untuk surat keluar lama dan `Tata_Naskah_Dinas` untuk dokumen SPM lama.
 
 ## Konfigurasi Penting
 
-Beberapa pengaturan utama ada di [Code.gs](Code.gs), seperti:
+Konfigurasi utama berada di [Code.gs](Code.gs):
 
-- Spreadsheet ID
-- Drive Root Folder ID
-- domain yang diizinkan
-- nama sheet data dan sheet konfigurasi
+- `SPREADSHEET_ID`
+- `DRIVE_ROOT_FOLDER_ID`
+- `ALLOWED_DOMAIN`
+- nama sheet utama dan sheet konfigurasi
+- batas ukuran upload arsip
+- umur minimal draft untuk reminder
 
-Pastikan nilai-nilai tersebut sesuai dengan spreadsheet dan folder Drive milik proyek.
+Saat memindahkan project ke spreadsheet atau folder Drive baru, perbarui nilai ID tersebut sebelum deploy.
 
-## Hak Akses
+## Izin dan Layanan Google
 
-Web app ini dikonfigurasi untuk akses domain, dan pada kode saat ini domain yang diizinkan adalah:
+Manifest [appsscript.json](appsscript.json) menggunakan:
 
-- `unpar.ac.id`
+- Google Sheets
+- Google Drive
+- user email
+- Apps Script UI
+- ScriptApp trigger
+- MailApp / pengiriman email
+- Google Contacts
+- Google Contacts readonly
+- Advanced Service `People` versi `v1`
 
-## Izin yang Dibutuhkan
+Untuk modul kontak, pastikan **People API** aktif di Apps Script Advanced Services dan Google Cloud project terkait.
 
-Dari [appsscript.json](appsscript.json), project ini menggunakan izin untuk:
+## Akses Pengguna
 
-- Spreadsheet
-- Drive
-- identitas pengguna
-- UI Apps Script
-- trigger script
-- pengiriman email
+Web app dikonfigurasi dengan:
 
-## Catatan Penggunaan
+- `executeAs`: `USER_DEPLOYING`
+- `access`: `DOMAIN`
+- domain yang diizinkan di kode: `unpar.ac.id`
 
-- Gunakan data yang valid agar penomoran dan validasi berjalan benar.
-- Pastikan trigger otomatis sudah terpasang jika ingin reminder email berjalan.
-- Jika struktur sheet berubah, jalankan utilitas perbaikan atau sinkronisasi yang tersedia di script.
+Pengguna di luar domain tersebut akan ditolak oleh fungsi pemeriksaan akses.
 
-## Ringkasan Singkat
+## Setup Awal
 
-Aplikasi ini adalah dasbor administrasi LPM berbasis Google Apps Script yang memusatkan pengelolaan surat, dokumen mutu, sertifikat, dan peminjaman dalam satu sistem dengan nomor otomatis, arsip Drive, audit log, dan notifikasi email.
+1. Pastikan `SPREADSHEET_ID` dan `DRIVE_ROOT_FOLDER_ID` sudah mengarah ke aset Google yang benar.
+2. Aktifkan Advanced Service **People API** jika modul kontak digunakan.
+3. Jalankan fungsi `initSpreadsheet()` dari editor Apps Script untuk membuat header sheet dan data konfigurasi awal.
+4. Deploy ulang web app setelah mengubah manifest, scope, atau layanan Google.
+5. Jalankan atau pasang trigger yang dibutuhkan:
+   - `installProjectTriggers()` untuk trigger proyek utama
+   - `installContactsDailySyncTrigger()` untuk sync kontak harian
+   - trigger reminder peminjaman sesuai kebutuhan operasional
+
+## Upload Arsip
+
+Upload arsip mendukung beberapa file dengan batas:
+
+- maksimal 4 file per unggahan
+- ukuran tiap file 50 KB sampai 25 MB
+- total unggahan maksimal 40 MB
+- jenis file yang umum dipakai: PDF, DOCX, XLSX, JPG, PNG, GIF
+
+File lama yang diganti akan dipindahkan ke trash jika penggantian arsip berhasil.
+
+## Antarmuka
+
+Frontend berada di [index.html](index.html) dan memuat:
+
+- sidebar modul utama
+- tab per modul
+- form responsif desktop dan mobile
+- preview otomatis untuk nomor dan penamaan file
+- tabel riwayat dengan pencarian dan filter
+- row cards untuk tabel pada layar kecil
+- loading overlay dengan progress
+- toast notification
+- notifikasi draft surat
+- ikon Lucide, Tailwind CDN, dan font Google Fonts
+
+## Operasional Harian
+
+Alur penggunaan umum:
+
+1. Buka web app.
+2. Pilih modul dari sidebar.
+3. Isi form atau cari data pada riwayat.
+4. Simpan sebagai draft, submit, cadangkan nomor, atau update data sesuai modul.
+5. Unggah arsip bila diperlukan.
+6. Pantau notifikasi, audit log, dan trigger otomatis.
+
+## Pemeliharaan
+
+Fungsi utilitas yang tersedia di backend antara lain:
+
+- memperbaiki kolom hasil generate
+- membersihkan trigger lama
+- menyinkronkan konfigurasi jenis surat
+- membuka folder Drive arsip
+- menampilkan atau menyembunyikan sheet konfigurasi
+- menyegarkan ringkasan dashboard dan laporan bulanan
+- mendiagnosis reminder peminjaman
+- memasang atau menghapus trigger sync kontak
+
+## Catatan Developer
+
+- Project ini tidak menggunakan build step lokal; file Apps Script langsung berupa `.gs`, `.html`, dan manifest JSON.
+- Jika menggunakan `clasp`, pastikan project sudah terhubung ke Apps Script yang benar sebelum `push`.
+- Jangan mengubah struktur kolom sheet tanpa menyesuaikan konstanta dan fungsi normalisasi di backend.
+- Setelah menambah OAuth scope atau Advanced Service, deploy ulang web app dan minta otorisasi ulang jika diperlukan.
+
