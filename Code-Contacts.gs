@@ -199,6 +199,7 @@ function saveContactData(contactObject) {
   normalizeContactsSheet_(sheet);
   var headerMap = getHeaderMap_(sheet);
   var contactId = String(contactObject["Contact_ID"] || "").trim();
+  var contactEmail = normalizeEmail_(getContactEmail_(contactObject));
   var targetRow = 0;
   var existingObject = null;
 
@@ -214,6 +215,31 @@ function saveContactData(contactObject) {
             targetRow = i + 2;
             break;
           }
+        }
+      }
+    }
+  }
+
+  if (contactEmail) {
+    var emailLastRow = sheet.getLastRow();
+    if (emailLastRow > 1) {
+      var existingRows = sheet.getRange(2, 1, emailLastRow - 1, CONTACTS_HEADERS.length).getValues();
+      var existingIdIdx = headerMap["Contact_ID"];
+      var existingNameIdx = headerMap["Nama_Display"];
+      for (var e = 0; e < existingRows.length; e++) {
+        var rowIndexByEmail = e + 2;
+        if (rowIndexByEmail === targetRow) continue;
+
+        if (normalizeEmail_(getRowContactEmail_(existingRows[e], headerMap)) === contactEmail) {
+          var existingName = existingNameIdx !== undefined ? String(existingRows[e][existingNameIdx] || "").trim() : "";
+          var existingId = existingIdIdx !== undefined ? String(existingRows[e][existingIdIdx] || "").trim() : "";
+          return {
+            success: false,
+            duplicateEmail: true,
+            message: "Email " + getContactEmail_(contactObject) + " sudah pernah didaftarkan" +
+              (existingName ? " untuk kontak " + existingName : "") +
+              (existingId ? " (" + existingId + ")" : "") + "."
+          };
         }
       }
     }

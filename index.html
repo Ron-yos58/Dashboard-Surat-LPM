@@ -6370,23 +6370,12 @@
                   <span class="btn-label">Hapus Trigger Harian</span>
                 </button>
               </div>
-              <div id="kontakSyncLog" style="margin-top:20px;display:none;">
+              <div id="kontakSyncLog" style="margin-top:20px;">
                 <div class="card-title" style="font-size:14px;margin-bottom:10px;">Log Hasil Sync Terakhir</div>
-                <pre id="kontakSyncLogContent" style="background:#f4f8f7;border:1px solid var(--unpar-line);border-radius:10px;padding:16px;font-size:12px;font-family:var(--font-mono);white-space:pre-wrap;word-break:break-all;color:var(--unpar-ink);max-height:360px;overflow-y:auto;"></pre>
+                <pre id="kontakSyncLogContent" style="background:#f4f8f7;border:1px solid var(--unpar-line);border-radius:10px;padding:16px;font-size:12px;font-family:var(--font-mono);white-space:pre-wrap;word-break:break-all;color:var(--unpar-ink);max-height:360px;overflow-y:auto;">Belum ada aktivitas sync pada sesi ini.</pre>
               </div>
             </div>
 
-            <div class="input-card" style="margin-top:20px;">
-              <div class="card-title">Petunjuk Setup People API</div>
-              <ol style="font-size:13px;line-height:1.9;color:var(--unpar-muted);padding-left:20px;">
-                <li>Buka <strong>Apps Script Editor</strong> (Extensions → Apps Script).</li>
-                <li>Klik <strong>+ (Add a service)</strong> di panel kiri.</li>
-                <li>Cari <strong>People API</strong>, pilih version <strong>v1</strong>, klik <strong>Add</strong>.</li>
-                <li>Pastikan <code>appsscript.json</code> sudah memuat scope <code>contacts</code> dan <code>contacts.readonly</code>.</li>
-                <li><strong>Re-deploy</strong> Web App (Deploy → Manage Deployments → Edit → Deploy).</li>
-                <li>Isi data kontak, lalu klik <strong>Sync Sekarang</strong>, atau klik <strong>Import dari Google Contacts</strong> untuk mengambil data dari Google.</li>
-              </ol>
-            </div>
           </div>
         </section>
         <!-- END: MANAJEMEN KONTAK MODULE -->
@@ -9816,6 +9805,7 @@
     var hasLoadedKontakGroups = false;
     var kontakGroupMembers = [];
     var hasLoadedKontakGroupMembers = false;
+    var kontakDuplicateHiddenCount = 0;
 
     function switchKontakTab(tabId) {
       var module = document.getElementById("kontakModule");
@@ -9842,8 +9832,11 @@
           hideLoading();
           if (res && res.success) {
             hasLoadedKontakRecords = true;
-            kontakRecords = Array.isArray(res.data) ? res.data : [];
+            kontakRecords = deduplicateKontakRecordsForView(Array.isArray(res.data) ? res.data : []);
             performKontakSearch();
+            if (kontakDuplicateHiddenCount > 0) {
+              showToast(kontakDuplicateHiddenCount + " baris kontak duplikat disembunyikan karena email sama.", "warning");
+            }
           } else {
             showToast("Gagal memuat kontak: " + (res ? res.message : "Unknown error"), "error");
             renderKontakTable([]);
@@ -9860,6 +9853,95 @@
     function getKontakEmail(contact) {
       contact = contact || {};
       return String(contact.Email || "").trim();
+    }
+
+    function normalizeKontakEmail_(email) {
+      return String(email || "").trim().toLowerCase();
+    }
+
+    function getKontakIdentityKey_(contact) {
+      var email = normalizeKontakEmail_(getKontakEmail(contact));
+      if (email) return "email:" + email;
+      var contactId = String(contact && contact.Contact_ID || "").trim();
+      if (contactId) return "id:" + contactId;
+      return "row:" + String(contact && contact._rowIndex || Math.random());
+    }
+
+    function scoreKontakRecordForView_(contact) {
+      contact = contact || {};
+      var score = 0;
+      ["Nama_Display", "Email", "Contact_Group", "Google_Resource_Name", "Last_Sync"].forEach(function(key) {
+        if (String(contact[key] || "").trim()) score += 2;
+      });
+      var status = String(contact.Sync_Status || "").trim().toUpperCase();
+      if (status === "SYNCED") score += 2;
+      if (status === "ERROR") score -= 1;
+      return score;
+    }
+
+    function mergeKontakGroupText_(first, second) {
+      var seen = {};
+      return String([first || "", second || ""].join(","))
+        .split(/[,\n;]+/)
+        .map(function(v) { return v.trim(); })
+        .filter(function(v) {
+          var key = v.toLowerCase();
+          if (!v || seen[key]) return false;
+          seen[key] = true;
+          return true;
+        })
+        .join(", ");
+    }
+
+    function mergeKontakRecordsForView_(current, incoming) {
+      var useIncoming = scoreKontakRecordForView_(incoming) > scoreKontakRecordForView_(current);
+      var base = useIncoming
+        ? Object.assign({}, incoming)
+        : Object.assign({}, current);
+      var other = useIncoming ? current : incoming;
+      ["Contact_ID", "Nama_Display", "Email", "Status", "Sync_Mode", "Google_Resource_Name", "Google_ETag", "Last_Sync", "Sync_Status", "Sync_Message"].forEach(function(key) {
+        if (!String(base[key] || "").trim() && String(other[key] || "").trim()) {
+          base[key] = other[key];
+        }
+      });
+      base.Contact_Group = mergeKontakGroupText_(current.Contact_Group, incoming.Contact_Group);
+      base._duplicateCount = (Number(current._duplicateCount) || 1) + (Number(incoming._duplicateCount) || 1);
+      return base;
+    }
+
+    function deduplicateKontakRecordsForView(records) {
+      var map = {};
+      var orderedKeys = [];
+      kontakDuplicateHiddenCount = 0;
+
+      (records || []).forEach(function(record) {
+        var key = getKontakIdentityKey_(record);
+        if (!map[key]) {
+          map[key] = Object.assign({}, record, { _duplicateCount: 1 });
+          orderedKeys.push(key);
+          return;
+        }
+        map[key] = mergeKontakRecordsForView_(map[key], record);
+        kontakDuplicateHiddenCount++;
+      });
+
+      return orderedKeys.map(function(key) { return map[key]; });
+    }
+
+    function findExistingKontakByEmail_(email, currentContactId) {
+      var targetEmail = normalizeKontakEmail_(email);
+      var targetId = String(currentContactId || "").trim();
+      if (!targetEmail) return null;
+
+      for (var i = 0; i < kontakRecords.length; i++) {
+        var item = kontakRecords[i] || {};
+        var itemEmail = normalizeKontakEmail_(getKontakEmail(item));
+        var itemId = String(item.Contact_ID || "").trim();
+        if (itemEmail === targetEmail && itemId !== targetId) {
+          return item;
+        }
+      }
+      return null;
     }
 
     function performKontakSearch() {
@@ -10211,6 +10293,13 @@
         showToast("Email wajib diisi.", "error"); return;
       }
 
+      var existingContact = findExistingKontakByEmail_(contactObj.Email, contactObj.Contact_ID);
+      if (existingContact) {
+        alert("Email " + contactObj.Email + " sudah pernah didaftarkan untuk kontak: " + (existingContact.Nama_Display || "-") + ".");
+        showToast("Email sudah pernah didaftarkan.", "error");
+        return;
+      }
+
       closeKontakModal();
       showLoading("Menyimpan kontak...");
 
@@ -10221,6 +10310,9 @@
             showToast(res.message || "Kontak berhasil disimpan.", "success");
             loadKontakData();
           } else {
+            if (res && res.duplicateEmail) {
+              alert(res.message || "Email sudah pernah didaftarkan.");
+            }
             showToast("Gagal: " + (res ? res.message : "Error tidak diketahui"), "error");
           }
         })
