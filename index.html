@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -24,7 +24,7 @@
       }
     };
   </script>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com" defer></script>
   <script defer src="https://unpkg.com/lucide@latest"></script>
   
   <style>
@@ -6805,7 +6805,7 @@
       try {
         isCollapsed = localStorage.getItem("lpmSidebarCollapsed") === "1";
       } catch (err) {
-        isCollapsed = false;
+          isCollapsed = false;
       }
       document.body.classList.toggle("sidebar-collapsed", isCollapsed);
       setHamburgerExpanded(!isCollapsed);
@@ -6813,20 +6813,16 @@
 
     // Inisialisasi awal saat halaman termuat
     window.addEventListener("DOMContentLoaded", function() {
-      renderLucideIcons();
-      document.querySelectorAll(".dropzone-hint").forEach(function(hint) {
-        hint.innerText = ARCHIVE_UPLOAD_HINT_TEXT;
-      });
+      // 1. Setup layout/viewport immediately (non-blocking, crucial for styling)
       syncSidebarForViewport();
       window.addEventListener("resize", syncSidebarForViewport);
 
-      // Close sidebar when clicking on a menu item
+      // 2. Setup event listeners (non-blocking)
       var sidebarBtns = document.querySelectorAll(".sidebar-btn");
       sidebarBtns.forEach(function(btn) {
         btn.addEventListener("click", closeSidebar);
       });
 
-      // Close sidebar when clicking outside
       document.addEventListener("click", function(event) {
         var sidebar = document.querySelector(".sidebar");
         var hamburger = document.getElementById("hamburgerBtn");
@@ -6847,8 +6843,6 @@
         }
       });
 
-      showLoading("Memuat data konfigurasi...");
-      
       // Setup drag and drop events
       var dropzone = document.getElementById("dropzone");
       
@@ -6923,31 +6917,42 @@
         }
       }, false);
 
-      // Load data dari server Apps Script
-      google.script.run
-        .withSuccessHandler(function(config) {
-          activeUserEmail = config.userEmail;
-          letterTypes = config.letterTypes;
-          tndDocumentTypes = config.tndDocumentTypes || [];
-          signatories = config.signatories;
-          recipients = config.recipients;
+      // Defer heavy UI parsing & external fetch routines to allow immediate layout paint
+      requestAnimationFrame(function() {
+        setTimeout(function() {
+          renderLucideIcons();
+          document.querySelectorAll(".dropzone-hint").forEach(function(hint) {
+            hint.innerText = ARCHIVE_UPLOAD_HINT_TEXT;
+          });
           
-          document.getElementById("activeUserEmail").innerText = activeUserEmail;
-          document.getElementById("pic").value = activeUserEmail;
-          document.getElementById("incomingPic").value = activeUserEmail;
-          document.getElementById("tndPic").value = activeUserEmail;
-          
-          populateFormDropdowns();
-          populateBorrowUnits();
-          document.getElementById("borrowEmail").value = activeUserEmail;
-          refreshDraftNotificationData();
-          hideLoading();
-        })
-        .withFailureHandler(function(err) {
-          hideLoading();
-          showToast("Gagal memuat konfigurasi: " + err.toString(), "error");
-        })
-        .getConfigData();
+          showLoading("Memuat data konfigurasi...");
+
+          google.script.run
+            .withSuccessHandler(function(config) {
+              activeUserEmail = config.userEmail;
+              letterTypes = config.letterTypes;
+              tndDocumentTypes = config.tndDocumentTypes || [];
+              signatories = config.signatories;
+              recipients = config.recipients;
+              
+              document.getElementById("activeUserEmail").innerText = activeUserEmail;
+              document.getElementById("pic").value = activeUserEmail;
+              document.getElementById("incomingPic").value = activeUserEmail;
+              document.getElementById("tndPic").value = activeUserEmail;
+              
+              populateFormDropdowns();
+              populateBorrowUnits();
+              document.getElementById("borrowEmail").value = activeUserEmail;
+              refreshDraftNotificationData();
+              hideLoading();
+            })
+            .withFailureHandler(function(err) {
+              hideLoading();
+              showToast("Gagal memuat konfigurasi: " + err.toString(), "error");
+            })
+            .getConfigData();
+        }, 50);
+      });
     });
 
     // Populasi data dropdown form dari data Config Sheets
