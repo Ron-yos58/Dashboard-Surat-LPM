@@ -5329,6 +5329,256 @@
       #kontakTableBody td:nth-child(8)::before { content: "Aksi"; }
     }
     /* END: MANAJEMEN KONTAK Styles */
+
+    /* DASHBOARD Styles */
+    #dashboardModule {
+      padding: 30px;
+    }
+
+    .dashboard-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+    }
+
+    .dashboard-header h2 {
+      margin: 0 0 5px;
+      color: var(--unpar-ink);
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .dashboard-header p {
+      margin: 0;
+      color: var(--unpar-muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .dashboard-refresh-btn {
+      width: auto !important;
+      max-width: none !important;
+      padding: 10px 18px !important;
+      min-height: 42px;
+    }
+
+    .dashboard-stats {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-stat-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px;
+      border-radius: var(--lpm-radius-lg, 16px);
+      border: 1px solid rgba(16, 24, 40, 0.09);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(251, 253, 253, 0.98));
+      box-shadow: var(--lpm-shadow-sm, 0 10px 24px rgba(1, 88, 80, 0.08));
+    }
+
+    .dashboard-stat-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      flex: none;
+      border-radius: 12px;
+    }
+
+    .dashboard-stat-icon.incoming {
+      color: var(--unpar-green);
+      background: var(--unpar-green-100);
+    }
+
+    .dashboard-stat-icon.outgoing {
+      color: #8a6b00;
+      background: #fff4d6;
+    }
+
+    .dashboard-stat-icon.draft {
+      color: #4753b8;
+      background: #eef2ff;
+    }
+
+    .dashboard-stat-label {
+      color: var(--unpar-muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      line-height: 1.35;
+    }
+
+    .dashboard-stat-value {
+      margin-top: 4px;
+      color: var(--unpar-ink);
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .dashboard-card {
+      padding: 22px 24px;
+      border-radius: var(--lpm-radius-lg, 16px);
+      border: 1px solid rgba(16, 24, 40, 0.09);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(251, 253, 253, 0.98));
+      box-shadow: var(--lpm-shadow-sm, 0 10px 24px rgba(1, 88, 80, 0.08));
+      margin-bottom: 20px;
+    }
+
+    .dashboard-card .card-title {
+      margin-bottom: 4px;
+    }
+
+    .dashboard-card-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .dashboard-subtitle {
+      color: var(--unpar-muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .dashboard-legend {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding-top: 4px;
+      color: var(--unpar-muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .dashboard-legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .dashboard-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+    }
+
+    .dashboard-legend-dot.incoming {
+      background: #015850;
+    }
+
+    .dashboard-legend-dot.outgoing {
+      background: #c58f00;
+    }
+
+    .dashboard-chart-shell {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .dashboard-chart-shell svg {
+      display: block;
+      width: 100%;
+      min-width: 620px;
+      height: auto;
+    }
+
+    .dashboard-chart-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-height: 260px;
+      color: var(--unpar-muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .dashboard-table-container {
+      max-height: 520px;
+      margin-top: 4px;
+      border-radius: 12px;
+    }
+
+    .dashboard-table-container table {
+      min-width: 780px;
+    }
+
+    .dashboard-table-container th,
+    .dashboard-table-container td {
+      padding: 12px 14px;
+      vertical-align: middle;
+    }
+
+    .dashboard-table-container td:nth-child(5) {
+      overflow-wrap: anywhere;
+    }
+
+    .dashboard-type-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .dashboard-type-badge.masuk {
+      color: var(--unpar-green-900);
+      background: var(--unpar-green-100);
+      border: 1px solid rgba(1, 88, 80, 0.18);
+    }
+
+    .dashboard-type-badge.keluar {
+      color: #6f5700;
+      background: #fff4d6;
+      border: 1px solid rgba(138, 120, 0, 0.22);
+    }
+
+    @media (max-width: 1200px) {
+      .dashboard-stats {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 840px) {
+      #dashboardModule {
+        padding: 18px;
+      }
+
+      .dashboard-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .dashboard-header {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .dashboard-stats {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* END: DASHBOARD Styles */
   </style>
 </head>
 <body class="min-h-screen antialiased selection:bg-emerald-200 selection:text-emerald-950">
@@ -5391,7 +5641,8 @@
     <div class="app-shell">
       <aside class="sidebar">
         <div class="sidebar-title">Menu Utama</div>
-        <button type="button" class="sidebar-btn active" data-module="keluar" onclick="switchMainModule('keluar')"><i data-lucide="send" class="ui-icon"></i><span>Surat Keluar</span></button>
+        <button type="button" class="sidebar-btn active" data-module="dashboard" onclick="switchMainModule('dashboard')"><i data-lucide="layout-dashboard" class="ui-icon"></i><span>Dashboard</span></button>
+        <button type="button" class="sidebar-btn" data-module="keluar" onclick="switchMainModule('keluar')"><i data-lucide="send" class="ui-icon"></i><span>Surat Keluar</span></button>
         <button type="button" class="sidebar-btn" data-module="masuk" onclick="switchMainModule('masuk')"><i data-lucide="inbox" class="ui-icon"></i><span>Surat Masuk</span></button>
         <button type="button" class="sidebar-btn" data-module="tnd" onclick="switchMainModule('tnd')"><i data-lucide="files" class="ui-icon"></i><span>Dokumen Sistem Penjaminan Mutu</span></button>
         <button type="button" class="sidebar-btn" data-module="sertifikat" onclick="switchMainModule('sertifikat')"><i data-lucide="award" class="ui-icon"></i><span>Sertifikat</span></button>
@@ -5403,7 +5654,108 @@
       </aside>
 
       <main class="main-content">
-        <section id="suratKeluarModule" class="module-content active">
+        <section id="dashboardModule" class="module-content active">
+          <div class="dashboard-header">
+            <div>
+              <h2>Dashboard Surat LPM</h2>
+              <p>Ringkasan jumlah surat masuk dan surat keluar dalam 12 bulan terakhir.</p>
+            </div>
+            <button type="button" class="btn btn-draft dashboard-refresh-btn" onclick="loadDashboardData({ showLoading: true, message: 'Memuat ulang data dashboard...' })">
+              <i data-lucide="refresh-cw" class="ui-icon icon-sm"></i>
+              <span>Refresh Data</span>
+            </button>
+          </div>
+
+          <div class="dashboard-stats">
+            <div class="dashboard-stat-card">
+              <div class="dashboard-stat-icon incoming"><i data-lucide="inbox" class="ui-icon"></i></div>
+              <div>
+                <div class="dashboard-stat-label">Total Surat Masuk</div>
+                <div class="dashboard-stat-value" id="dashboardIncomingTotal">0</div>
+              </div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="dashboard-stat-icon outgoing"><i data-lucide="send" class="ui-icon"></i></div>
+              <div>
+                <div class="dashboard-stat-label">Total Surat Keluar</div>
+                <div class="dashboard-stat-value" id="dashboardOutgoingTotal">0</div>
+              </div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="dashboard-stat-icon incoming"><i data-lucide="calendar-days" class="ui-icon"></i></div>
+              <div>
+                <div class="dashboard-stat-label">Surat Masuk Bulan Ini</div>
+                <div class="dashboard-stat-value" id="dashboardIncomingMonth">0</div>
+              </div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="dashboard-stat-icon outgoing"><i data-lucide="calendar-check" class="ui-icon"></i></div>
+              <div>
+                <div class="dashboard-stat-label">Surat Keluar Bulan Ini</div>
+                <div class="dashboard-stat-value" id="dashboardOutgoingMonth">0</div>
+              </div>
+            </div>
+            <div class="dashboard-stat-card">
+              <div class="dashboard-stat-icon draft"><i data-lucide="file-pen" class="ui-icon"></i></div>
+              <div>
+                <div class="dashboard-stat-label">Draft Aktif</div>
+                <div class="dashboard-stat-value" id="dashboardDraftTotal">0</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="dashboard-card-head">
+              <div>
+                <div class="card-title">Tren Surat Masuk & Surat Keluar</div>
+                <div class="dashboard-subtitle">Jumlah surat per bulan dalam 12 bulan terakhir.</div>
+              </div>
+              <div class="dashboard-legend">
+                <span class="dashboard-legend-item"><span class="dashboard-legend-dot incoming"></span>Surat Masuk</span>
+                <span class="dashboard-legend-item"><span class="dashboard-legend-dot outgoing"></span>Surat Keluar</span>
+              </div>
+            </div>
+            <div class="dashboard-chart-shell">
+              <div id="dashboardChart" class="dashboard-chart-state">
+                <div class="empty-state-icon loading"><i data-lucide="loader-circle"></i></div>
+                <div>Sedang memuat grafik...</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <div class="dashboard-card-head">
+              <div>
+                <div class="card-title">Aktivitas Surat Terbaru</div>
+                <div class="dashboard-subtitle">Daftar surat masuk dan surat keluar terakhir yang tercatat.</div>
+              </div>
+            </div>
+            <div class="table-container dashboard-table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">No.</th>
+                    <th style="width: 110px;">Modul</th>
+                    <th style="width: 150px;">Tanggal</th>
+                    <th style="width: 220px;">Nomor Surat</th>
+                    <th>Perihal</th>
+                    <th style="width: 120px; text-align: center;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="dashboardRecentTableBody">
+                  <tr>
+                    <td colspan="6" class="empty-state">
+                      <div class="empty-state-icon loading"><i data-lucide="loader-circle"></i></div>
+                      <div>Sedang memuat aktivitas surat...</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="suratKeluarModule" class="module-content">
     <!-- Tabs Nav -->
     <div class="tabs-nav">
       <button class="tab-btn active" onclick="switchTab('form-tab')"><i data-lucide="square-pen" class="ui-icon icon-sm"></i> Formulir Surat</button>
@@ -6450,6 +6802,7 @@
     var hasLoadedIncomingRecords = false;
     var hasLoadedTndRecords = false;
     var hasLoadedBorrowRecords = false;
+    var hasLoadedDashboard = false;
     var isBorrowSubmitting = false;
     var borrowUnits = [
       "Rektorat",
@@ -6943,7 +7296,10 @@
               populateFormDropdowns();
               populateBorrowUnits();
               document.getElementById("borrowEmail").value = activeUserEmail;
-              refreshDraftNotificationData();
+              refreshDraftNotificationData({ showLoading: true, message: "Memuat notifikasi draft..." });
+              if (!hasLoadedDashboard) {
+                loadDashboardData({ showLoading: true, message: "Memuat data dashboard..." });
+              }
               hideLoading();
             })
             .withFailureHandler(function(err) {
@@ -7846,17 +8202,335 @@
         .getIncomingRecordList();
     }
 
-    function refreshDraftNotificationData() {
-      google.script.run
-        .withSuccessHandler(function(items) {
-          draftNotificationItems = (Array.isArray(items) ? items : []).map(normalizeDraftNotificationItem);
-          updateDraftNotifications();
+    function refreshDraftNotificationData(options) {
+      var didShowLoading = beginDataLoad(options, "Memuat notifikasi draft...");
+      try {
+        google.script.run
+          .withSuccessHandler(function(items) {
+            finishDataLoad(didShowLoading);
+            draftNotificationItems = (Array.isArray(items) ? items : []).map(normalizeDraftNotificationItem);
+            updateDraftNotifications();
+          })
+          .withFailureHandler(function(err) {
+            finishDataLoad(didShowLoading);
+            console.warn("Gagal memuat notifikasi draft:", err);
+            updateDraftNotifications();
+          })
+          .getDraftNotificationList();
+      } catch (err) {
+        finishDataLoad(didShowLoading);
+        console.warn("Gagal memuat notifikasi draft:", err);
+        updateDraftNotifications();
+      }
+    }
+
+    function loadDashboardData(options) {
+      var didShowLoading = beginDataLoad(options, "Memuat data dashboard...");
+
+      function handleFailure(err) {
+        finishDataLoad(didShowLoading);
+        showToast("Gagal memuat dashboard: " + err, "error");
+        renderDashboardEmpty();
+      }
+
+      function loadIncomingRows(outgoingRows) {
+        try {
+          google.script.run
+            .withSuccessHandler(function(incomingRows) {
+              finishDataLoad(didShowLoading);
+              hasLoadedDashboard = true;
+              renderDashboard(buildDashboardData(
+                Array.isArray(outgoingRows) ? outgoingRows : [],
+                Array.isArray(incomingRows) ? incomingRows : []
+              ));
+            })
+            .withFailureHandler(handleFailure)
+            .getIncomingRecordList();
+        } catch (err) {
+          handleFailure(err);
+        }
+      }
+
+      try {
+        google.script.run
+          .withSuccessHandler(function(outgoingRows) {
+            loadIncomingRows(outgoingRows);
+          })
+          .withFailureHandler(handleFailure)
+          .getRecordList();
+      } catch (err) {
+        handleFailure(err);
+      }
+    }
+
+    function buildDashboardData(outgoingRows, incomingRows) {
+      var incomingCount = 0, outgoingCount = 0, draftCount = 0;
+      var incomingThisMonth = 0, outgoingThisMonth = 0;
+      var recentRecords = [];
+      var monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+      var today = new Date();
+      var currentMonthKey = today.getFullYear() + "-" + padTwo(today.getMonth() + 1);
+      var monthlyLookup = {};
+      var monthlyData = [];
+
+      for (var m = 11; m >= 0; m--) {
+        var monthDate = new Date(today.getFullYear(), today.getMonth() - m, 1);
+        var monthKey = monthDate.getFullYear() + "-" + padTwo(monthDate.getMonth() + 1);
+        var entry = {
+          key: monthKey,
+          month: monthNames[monthDate.getMonth()],
+          label: monthNames[monthDate.getMonth()] + " " + String(monthDate.getFullYear()).slice(-2),
+          incoming: 0,
+          outgoing: 0
+        };
+        monthlyLookup[monthKey] = entry;
+        monthlyData.push(entry);
+      }
+
+      outgoingRows.forEach(function(raw) {
+        var row = normalizeRecord(raw);
+        if (row.status === "CANCELLED") return;
+
+        outgoingCount++;
+        if (row.status === "DRAFT") draftCount++;
+
+        var monthKey = dashboardMonthKey(row.date);
+        if (monthKey === currentMonthKey) outgoingThisMonth++;
+        if (monthlyLookup[monthKey]) monthlyLookup[monthKey].outgoing++;
+
+        recentRecords.push({
+          date: row.date,
+          number: row.noSuratFinal,
+          subject: row.perihal,
+          type: "Keluar",
+          status: row.status
+        });
+      });
+
+      incomingRows.forEach(function(raw) {
+        var row = normalizeIncomingRecord(raw);
+        if (row.status === "CANCELLED") return;
+
+        incomingCount++;
+        if (row.status === "DRAFT") draftCount++;
+
+        var monthKey = dashboardMonthKey(row.dateReceived);
+        if (monthKey === currentMonthKey) incomingThisMonth++;
+        if (monthlyLookup[monthKey]) monthlyLookup[monthKey].incoming++;
+
+        recentRecords.push({
+          date: row.dateReceived,
+          number: row.manualNumber,
+          subject: row.perihal,
+          type: "Masuk",
+          status: row.status
+        });
+      });
+
+      recentRecords = recentRecords
+        .filter(function(record) { return record.date; })
+        .sort(function(a, b) {
+          if (a.date === b.date) return 0;
+          return a.date < b.date ? 1 : -1;
         })
-        .withFailureHandler(function(err) {
-          console.warn("Gagal memuat notifikasi draft:", err);
-          updateDraftNotifications();
-        })
-        .getDraftNotificationList();
+        .slice(0, 12);
+
+      return {
+        incomingCount: incomingCount,
+        outgoingCount: outgoingCount,
+        draftCount: draftCount,
+        incomingThisMonth: incomingThisMonth,
+        outgoingThisMonth: outgoingThisMonth,
+        monthlyData: monthlyData,
+        recentRecords: recentRecords
+      };
+    }
+
+    function dashboardMonthKey(dateValue) {
+      var text = String(dateValue || "").trim();
+      var isoMatch = text.match(/^(\d{4})-(\d{2})/);
+      if (isoMatch) return isoMatch[1] + "-" + isoMatch[2];
+
+      var date = new Date(text);
+      if (isNaN(date.getTime())) return "";
+      return date.getFullYear() + "-" + padTwo(date.getMonth() + 1);
+    }
+
+    function padTwo(value) {
+      return (value < 10 ? "0" : "") + value;
+    }
+
+    function renderDashboardEmpty() {
+      setDashboardValue("dashboardIncomingTotal", 0);
+      setDashboardValue("dashboardOutgoingTotal", 0);
+      setDashboardValue("dashboardIncomingMonth", 0);
+      setDashboardValue("dashboardOutgoingMonth", 0);
+      setDashboardValue("dashboardDraftTotal", 0);
+
+      var chart = document.getElementById("dashboardChart");
+      if (chart) {
+        chart.className = "dashboard-chart-state";
+        chart.innerHTML = '<div class="empty-state-icon"><i data-lucide="chart-no-axes-combined"></i></div>' +
+          '<div>Data grafik belum tersedia.</div>';
+      }
+
+      var tbody = document.getElementById("dashboardRecentTableBody");
+      if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">' +
+          '<div class="empty-state-icon"><i data-lucide="folder-open"></i></div>' +
+          '<div>Belum ada aktivitas surat yang tercatat.</div>' +
+          '</td></tr>';
+      }
+      renderLucideIcons();
+    }
+
+    function renderDashboard(data) {
+      data = data || {};
+      setDashboardValue("dashboardIncomingTotal", data.incomingCount);
+      setDashboardValue("dashboardOutgoingTotal", data.outgoingCount);
+      setDashboardValue("dashboardIncomingMonth", data.incomingThisMonth);
+      setDashboardValue("dashboardOutgoingMonth", data.outgoingThisMonth);
+      setDashboardValue("dashboardDraftTotal", data.draftCount);
+
+      renderDashboardChart(data.monthlyData || []);
+      renderDashboardRecentRecords(data.recentRecords || []);
+      renderLucideIcons();
+    }
+
+    function setDashboardValue(elementId, value) {
+      var element = document.getElementById(elementId);
+      if (!element) return;
+      var number = Number(value);
+      if (!isFinite(number)) number = 0;
+      element.textContent = number.toLocaleString("id-ID");
+    }
+
+    function renderDashboardChart(monthlyData) {
+      var container = document.getElementById("dashboardChart");
+      if (!container) return;
+
+      var points = Array.isArray(monthlyData) ? monthlyData : [];
+      if (!points.length) {
+        container.className = "dashboard-chart-state";
+        container.innerHTML = '<div class="empty-state-icon"><i data-lucide="chart-no-axes-combined"></i></div>' +
+          '<div>Belum ada data grafik.</div>';
+        return;
+      }
+
+      var width = 820;
+      var height = 320;
+      var padding = { top: 28, right: 26, bottom: 48, left: 44 };
+      var plotWidth = width - padding.left - padding.right;
+      var plotHeight = height - padding.top - padding.bottom;
+
+      var maxValue = 0;
+      points.forEach(function(item) {
+        maxValue = Math.max(maxValue, Number(item.incoming) || 0, Number(item.outgoing) || 0);
+      });
+      maxValue = Math.max(4, Math.ceil(maxValue / 4) * 4);
+      var stepX = points.length > 1 ? plotWidth / (points.length - 1) : 0;
+
+      function xAt(index) {
+        return padding.left + (stepX * index);
+      }
+
+      function yAt(value) {
+        return padding.top + plotHeight - ((Number(value) || 0) / maxValue) * plotHeight;
+      }
+
+      function buildSeries(field, color, areaId) {
+        var linePoints = [];
+        var circles = "";
+        points.forEach(function(item, index) {
+          var x = xAt(index);
+          var y = yAt(item[field]);
+          linePoints.push(x.toFixed(1) + "," + y.toFixed(1));
+          circles += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="' + color + '" stroke="#ffffff" stroke-width="2">' +
+            '<title>' + escapeHtml(item.label || item.month || "") + ': ' + (Number(item[field]) || 0) + '</title>' +
+            '</circle>';
+        });
+
+        var lineString = linePoints.join(" ");
+        var baseline = (padding.top + plotHeight).toFixed(1);
+        var area = '<polygon points="' + xAt(0).toFixed(1) + ',' + baseline + ' ' + lineString + ' ' +
+          xAt(points.length - 1).toFixed(1) + ',' + baseline + '" fill="url(#' + areaId + ')"></polygon>';
+
+        return area +
+          '<polyline points="' + lineString + '" fill="none" stroke="' + color + '" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"></polyline>' +
+          circles;
+      }
+
+      var grid = "";
+      var yLabels = "";
+      for (var i = 0; i <= 4; i++) {
+        var tickValue = Math.round((maxValue / 4) * i);
+        var y = yAt(tickValue);
+        grid += '<line x1="' + padding.left + '" y1="' + y.toFixed(1) + '" x2="' + (width - padding.right) + '" y2="' + y.toFixed(1) + '" stroke="rgba(1,88,80,0.13)" stroke-dasharray="4 5"></line>';
+        yLabels += '<text x="' + (padding.left - 10) + '" y="' + (y + 4).toFixed(1) + '" text-anchor="end" font-size="11" fill="#64716f">' + tickValue + '</text>';
+      }
+
+      var xLabels = "";
+      points.forEach(function(item, index) {
+        xLabels += '<text x="' + xAt(index).toFixed(1) + '" y="' + (height - 18) + '" text-anchor="middle" font-size="11" fill="#64716f">' +
+          escapeHtml(item.label || item.month || "") + '</text>';
+      });
+
+      container.className = "";
+      container.innerHTML = '<svg viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="Grafik garis jumlah surat masuk dan surat keluar">' +
+        '<defs>' +
+          '<linearGradient id="dashboardIncomingArea" x1="0" y1="0" x2="0" y2="1">' +
+            '<stop offset="0%" stop-color="#015850" stop-opacity="0.24"></stop>' +
+            '<stop offset="100%" stop-color="#015850" stop-opacity="0.02"></stop>' +
+          '</linearGradient>' +
+          '<linearGradient id="dashboardOutgoingArea" x1="0" y1="0" x2="0" y2="1">' +
+            '<stop offset="0%" stop-color="#c58f00" stop-opacity="0.24"></stop>' +
+            '<stop offset="100%" stop-color="#c58f00" stop-opacity="0.02"></stop>' +
+          '</linearGradient>' +
+        '</defs>' +
+        grid +
+        yLabels +
+        xLabels +
+        buildSeries("outgoing", "#c58f00", "dashboardOutgoingArea") +
+        buildSeries("incoming", "#015850", "dashboardIncomingArea") +
+        '</svg>';
+    }
+
+    function renderDashboardRecentRecords(records) {
+      var tbody = document.getElementById("dashboardRecentTableBody");
+      if (!tbody) return;
+
+      records = Array.isArray(records) ? records : [];
+      if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">' +
+          '<div class="empty-state-icon"><i data-lucide="folder-open"></i></div>' +
+          '<div>Belum ada aktivitas surat yang tercatat.</div>' +
+          '</td></tr>';
+        return;
+      }
+
+      var rows = "";
+      records.forEach(function(record, index) {
+        var isIncoming = String(record.type || "").toLowerCase() === "masuk";
+        var moduleClass = isIncoming ? "masuk" : "keluar";
+        var moduleLabel = isIncoming ? "Masuk" : "Keluar";
+        var status = String(record.status || "").trim().toUpperCase();
+        var statusBadgeClass = "badge-draft";
+        if (status === "SUBMITTED") statusBadgeClass = "badge-submitted";
+        else if (status === "CANCELLED") statusBadgeClass = "badge-cancelled";
+        else if (status === "ARCHIVED") statusBadgeClass = "badge-archived";
+        else if (status === "RESERVED") statusBadgeClass = "badge-reserved";
+
+        rows += '<tr>' +
+          '<td>' + (index + 1) + '</td>' +
+          '<td><span class="dashboard-type-badge ' + moduleClass + '">' + moduleLabel + '</span></td>' +
+          '<td>' + escapeHtml(formatDateIndo(record.date) || "-") + '</td>' +
+          '<td><strong>' + escapeHtml(record.number || "-") + '</strong></td>' +
+          '<td>' + escapeHtml(record.subject || "-") + '</td>' +
+          '<td style="text-align:center;"><span class="badge ' + statusBadgeClass + '">' + escapeHtml(status || "-") + '</span></td>' +
+          '</tr>';
+      });
+
+      tbody.innerHTML = rows;
     }
 
     function populateBorrowUnits() {
@@ -9701,7 +10375,12 @@
         btn.classList.toggle("active", btn.getAttribute("data-module") === moduleName);
       });
 
-      if (moduleName === "masuk") {
+      if (moduleName === "dashboard") {
+        document.getElementById("dashboardModule").classList.add("active");
+        if (!hasLoadedDashboard) {
+          loadDashboardData();
+        }
+      } else if (moduleName === "masuk") {
         document.getElementById("suratMasukModule").classList.add("active");
         if (document.getElementById("incoming-list-tab").classList.contains("active")) {
           if (hasLoadedIncomingRecords) {
