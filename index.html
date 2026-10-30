@@ -5658,12 +5658,20 @@
           <div class="dashboard-header">
             <div>
               <h2>Dashboard Surat LPM</h2>
-              <p>Ringkasan jumlah surat masuk dan surat keluar dalam 12 bulan terakhir.</p>
+              <p>Ringkasan jumlah surat masuk dan surat keluar per tahun.</p>
             </div>
-            <button type="button" class="btn btn-draft dashboard-refresh-btn" onclick="loadDashboardData({ showLoading: true, message: 'Memuat ulang data dashboard...' })">
-              <i data-lucide="refresh-cw" class="ui-icon icon-sm"></i>
-              <span>Refresh Data</span>
-            </button>
+            <div style="display: flex; gap: 12px; align-items: center;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <label for="dashboardYearFilter" style="font-size: 14px; font-weight: 600; color: #17212b;">Filter Tahun:</label>
+                <select id="dashboardYearFilter" style="padding: 10px 12px; border-radius: 8px; border: 1px solid #d9e3ea; font-size: 14px; cursor: pointer; background: #ffffff;" onchange="loadDashboardData({ showLoading: true, message: 'Memuat data untuk tahun terpilih...' })">
+                  <option value="">Loading...</option>
+                </select>
+              </div>
+              <button type="button" class="btn btn-draft dashboard-refresh-btn" onclick="loadDashboardData({ showLoading: true, message: 'Memuat ulang data dashboard...' })" style="padding: 10px 14px; font-size: 13px;">
+                <i data-lucide="refresh-cw" class="ui-icon icon-sm"></i>
+                <span>Refresh</span>
+              </button>
+            </div>
           </div>
 
           <div class="dashboard-stats">
@@ -7298,7 +7306,7 @@
               document.getElementById("borrowEmail").value = activeUserEmail;
               refreshDraftNotificationData({ showLoading: true, message: "Memuat notifikasi draft..." });
               if (!hasLoadedDashboard) {
-                loadDashboardData({ showLoading: true, message: "Memuat data dashboard..." });
+                initDashboardYearFilter({ showLoading: true, message: "Memuat data dashboard..." });
               }
               hideLoading();
             })
@@ -8224,126 +8232,94 @@
       }
     }
 
-    function loadDashboardData(options) {
+    function loadDashboardData(options, onComplete) {
       var didShowLoading = beginDataLoad(options, "Memuat data dashboard...");
+      var selectedYear = document.getElementById("dashboardYearFilter").value;
+
+      function complete() {
+        finishDataLoad(didShowLoading);
+        if (typeof onComplete === "function") onComplete();
+      }
 
       function handleFailure(err) {
-        finishDataLoad(didShowLoading);
+        complete();
         showToast("Gagal memuat dashboard: " + err, "error");
         renderDashboardEmpty();
       }
 
-      function loadIncomingRows(outgoingRows) {
-        try {
-          google.script.run
-            .withSuccessHandler(function(incomingRows) {
-              finishDataLoad(didShowLoading);
-              hasLoadedDashboard = true;
-              renderDashboard(buildDashboardData(
-                Array.isArray(outgoingRows) ? outgoingRows : [],
-                Array.isArray(incomingRows) ? incomingRows : []
-              ));
-            })
-            .withFailureHandler(handleFailure)
-            .getIncomingRecordList();
-        } catch (err) {
-          handleFailure(err);
-        }
-      }
-
       try {
         google.script.run
-          .withSuccessHandler(function(outgoingRows) {
-            loadIncomingRows(outgoingRows);
+          .withSuccessHandler(function(result) {
+            if (result.success) {
+              hasLoadedDashboard = true;
+              renderDashboard(result.data);
+            } else {
+              showToast("Gagal: " + result.message, "error");
+              renderDashboardEmpty();
+            }
+            complete();
           })
           .withFailureHandler(handleFailure)
-          .getRecordList();
+          .getDashboardData(selectedYear);
       } catch (err) {
         handleFailure(err);
       }
     }
 
-    function buildDashboardData(outgoingRows, incomingRows) {
-      var incomingCount = 0, outgoingCount = 0, draftCount = 0;
-      var incomingThisMonth = 0, outgoingThisMonth = 0;
-      var recentRecords = [];
-      var monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
-      var today = new Date();
-      var currentMonthKey = today.getFullYear() + "-" + padTwo(today.getMonth() + 1);
-      var monthlyLookup = {};
-      var monthlyData = [];
+    var hasInitDashboardYearFilter = false;
+    var isLoadingDashboardYearFilter = false;
 
-      for (var m = 11; m >= 0; m--) {
-        var monthDate = new Date(today.getFullYear(), today.getMonth() - m, 1);
-        var monthKey = monthDate.getFullYear() + "-" + padTwo(monthDate.getMonth() + 1);
-        var entry = {
-          key: monthKey,
-          month: monthNames[monthDate.getMonth()],
-          label: monthNames[monthDate.getMonth()] + " " + String(monthDate.getFullYear()).slice(-2),
-          incoming: 0,
-          outgoing: 0
-        };
-        monthlyLookup[monthKey] = entry;
-        monthlyData.push(entry);
+    function initDashboardYearFilter(options) {
+      var select = document.getElementById("dashboardYearFilter");
+      if (!select) return;
+
+      if (hasInitDashboardYearFilter) {
+        loadDashboardData(options);
+        return;
+      }
+      if (isLoadingDashboardYearFilter) return;
+
+      var didShowLoading = beginDataLoad(options, "Memuat data dashboard...");
+      isLoadingDashboardYearFilter = true;
+      select.innerHTML = '<option value="">Memuat tahun...</option>';
+
+      function applyYears(years) {
+        isLoadingDashboardYearFilter = false;
+        select.innerHTML = "";
+
+        var list = Array.isArray(years) ? years.filter(function(y) {
+          return Number(y) > 0;
+        }) : [];
+
+        if (list.length === 0) {
+          list = [new Date().getFullYear()];
+        }
+
+        list.forEach(function(year) {
+          var option = document.createElement("option");
+          option.value = String(year);
+          option.textContent = String(year);
+          select.appendChild(option);
+        });
+
+        hasInitDashboardYearFilter = true;
+        loadDashboardData({}, function() {
+          finishDataLoad(didShowLoading);
+        });
       }
 
-      outgoingRows.forEach(function(raw) {
-        var row = normalizeRecord(raw);
-        if (row.status === "CANCELLED") return;
-
-        outgoingCount++;
-        if (row.status === "DRAFT") draftCount++;
-
-        var monthKey = dashboardMonthKey(row.date);
-        if (monthKey === currentMonthKey) outgoingThisMonth++;
-        if (monthlyLookup[monthKey]) monthlyLookup[monthKey].outgoing++;
-
-        recentRecords.push({
-          date: row.date,
-          number: row.noSuratFinal,
-          subject: row.perihal,
-          type: "Keluar",
-          status: row.status
-        });
-      });
-
-      incomingRows.forEach(function(raw) {
-        var row = normalizeIncomingRecord(raw);
-        if (row.status === "CANCELLED") return;
-
-        incomingCount++;
-        if (row.status === "DRAFT") draftCount++;
-
-        var monthKey = dashboardMonthKey(row.dateReceived);
-        if (monthKey === currentMonthKey) incomingThisMonth++;
-        if (monthlyLookup[monthKey]) monthlyLookup[monthKey].incoming++;
-
-        recentRecords.push({
-          date: row.dateReceived,
-          number: row.manualNumber,
-          subject: row.perihal,
-          type: "Masuk",
-          status: row.status
-        });
-      });
-
-      recentRecords = recentRecords
-        .filter(function(record) { return record.date; })
-        .sort(function(a, b) {
-          if (a.date === b.date) return 0;
-          return a.date < b.date ? 1 : -1;
-        })
-        .slice(0, 12);
-
-      return {
-        incomingCount: incomingCount,
-        outgoingCount: outgoingCount,
-        draftCount: draftCount,
-        incomingThisMonth: incomingThisMonth,
-        outgoingThisMonth: outgoingThisMonth,
-        monthlyData: monthlyData,
-        recentRecords: recentRecords
-      };
+      try {
+        google.script.run
+          .withSuccessHandler(applyYears)
+          .withFailureHandler(function(err) {
+            console.error("Gagal load tahun: " + err);
+            applyYears([new Date().getFullYear()]);
+          })
+          .getDashboardYears();
+      } catch (err) {
+        console.error("Error init dashboard filter: " + err);
+        applyYears([new Date().getFullYear()]);
+      }
     }
 
     function dashboardMonthKey(dateValue) {
@@ -10377,9 +10353,7 @@
 
       if (moduleName === "dashboard") {
         document.getElementById("dashboardModule").classList.add("active");
-        if (!hasLoadedDashboard) {
-          loadDashboardData();
-        }
+        initDashboardYearFilter();
       } else if (moduleName === "masuk") {
         document.getElementById("suratMasukModule").classList.add("active");
         if (document.getElementById("incoming-list-tab").classList.contains("active")) {
