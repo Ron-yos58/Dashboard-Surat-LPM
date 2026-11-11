@@ -6455,7 +6455,7 @@
                             <input type="radio" name="certificateIeCode" value="I" onchange="updateCertificatePreview()"> Internal (I)
                           </label>
                         </div>
-                        <div class="hint">Default sertifikat memakai prefix eksternal (II)</div>
+                        <div class="hint">Penomoran sertifikat memakai prefix III</div>
                       </div>
                       <div class="form-group">
                         <label for="certificateTtd">Penandatangan (TTD)<span class="required">*</span></label>
@@ -9219,7 +9219,7 @@
       var date = new Date(dateVal);
       var year = date.getFullYear();
       var month = String(date.getMonth() + 1).padStart(2, '0');
-      var prefix = ieVal === "I" ? "III" : "II";
+      var prefix = "III";
       var seqPadded = String(seqVal).padStart(3, '0');
       
       var finalNo = prefix + "/LPM/" + year + "-" + month + "/" + seqPadded + "-" + ieVal;
@@ -9248,7 +9248,7 @@
 
       var year = date.getFullYear();
       var month = String(date.getMonth() + 1).padStart(2, "0");
-      var prefix = ieVal === "I" ? "III" : "II";
+      var prefix = "III";
       return prefix + "/LPM/" + year + "-" + month + "/" + String(seqVal).padStart(3, "0") + "-" + ieVal;
     }
 
